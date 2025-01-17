@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>新标签页</title>
+    <link rel="icon" href="favicon.ico" type="image/x-icon">
+    <link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <div id="clock"></div>
+    <div class="container">
+        <div class="header">
+        </div>
+        <div class="search-container">
+            <div class="search-wrapper">
+                <select id="search-engine" class="search-engine-select">
+                    <option value="baidu" data-icon="https://www.baidu.com/favicon.ico">百度</option>
+                    <option value="google" data-icon="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAMAAABEpIrGAAAABGdBTUEAALGPC/xhBQAAAAFzUkdCAK7OHOkAAABjUExURUxpcf////8gIP8AAP93d/9AQP9QUP+AgP9gYP+Pj/+vr/+fn/+/v/+goP/Pz/+wsP/v7/+Bgf9hYf/f3/+QkP+wsPwAAP+AgP/f3/+fn/9wcP+vr//Pz/+Pj/9QUP8QEP8gIP///7BxvbgAAAAfdFJOUwCR7v4FxzK/Cw0DBmvB5S6MiuQlrYPaYBxbzlQ5SJEzjwoAAAFKSURBVDjLfVPZloMgDEQEF9wVt7bT5f//sgFxqaedd8gJk5tJCP5EKeUfQPrHkP4EUkpTBmF0wgjICMUY0+z7F4TVNI1SjXa4YeNkXdd1MwxnMMuyLG3b/gR0XZem6RcE1wkh67oaY+Z5TpLkBgGHMAzjOEaSGGPXdRdEWZYhBLQsSxAEGOM8zzHGF0RRFBDQsiymaQqC4IwoimJZFoxxHMcEhBCSZRkEwDn3PA8hdEI8z4MAmOd5kiQQUFUVxvgCKYriApnnGUJwxvM8vwP2fccYb9t2hxRFQSlFCBlj3gHbtkFAVVUQ4Ps+pVQp9Q7Y9/0CgZZ93z8cBwS01r7vE0Jc130H6DTGEELgbsuyOI5j23YQBFrrEwL+4zhCCBDQNI1lWUEQnBBjDNwNwxBFked5bdsCwg3xC4RzrpQ6IfAL5xwQ8Ot53l/4AZTyJEXbULHAAAAAAElFTkSuQmCC">谷歌</option>
+                    <option value="bing" data-icon="https://www.bing.com/favicon.ico">必应</option>
+                    <option value="sogou" data-icon="https://www.sogou.com/favicon.ico">搜狗</option>
+                    <option value="duckduckgo" data-icon="https://duckduckgo.com/favicon.ico">DuckDuckGo</option>
+                    <option value="yandex" data-icon="https://yandex.com/favicon.ico">Yandex</option>
+                    <option value="github" data-icon="https://github.com/favicon.ico">GitHub</option>
+                </select>
+                <input type="text" id="search-input" placeholder="搜索...">
+                <button id="search-button">搜索</button>
+            </div>
+        </div>
+        <div class="bookmarks-container">
+            <h2>快速访问</h2>
+            <div id="bookmarks-list"></div>
+        </div>
+    </div>
+
+    <!-- 设置模态框 -->
+    <div id="settings-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>设置</h2>
+                <button class="close-modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="settings-section">
+                    <label for="theme-select">主题：</label>
+                    <select id="theme-select">
+                        <option value="light">浅色</option>
+                        <option value="dark">深色</option>
+                    </select>
+                </div>
+                <div class="settings-section">
+                    <label for="wallpaper-source">背景图片源：</label>
+                    <select id="wallpaper-source">
+                        <option value="bing-daily">必应每日图片</option>
+                        <option value="bing-random">必应随机图片</option>
+                    </select>
+                </div>
+                <div class="settings-section vertical">
+                    <label for="search-opacity">搜索框背景透明度</label>
+                    <div class="control-wrapper">
+                        <input type="range" id="search-opacity" min="0" max="100" value="90" step="1">
+                        <span id="opacity-value">90%</span>
+                    </div>
+                </div>
+                <div class="settings-section vertical">
+                    <label for="blur-strength">模糊效果强度</label>
+                    <div class="control-wrapper">
+                        <input type="range" id="blur-strength" min="0" max="40" value="20" step="1">
+                        <span id="blur-value">20px</span>
+                    </div>
+                </div>
+                <div class="settings-section">
+                    <label>启用双击隐藏控件</label>
+                    <div class="toggle-switch">
+                        <input type="checkbox" id="enable-double-click" checked>
+                        <label for="enable-double-click" class="toggle-label">
+                            <span class="toggle-button"></span>
+                        </label>
+                    </div>
+                </div>
+                <div class="settings-section">
+                    <h3 class="settings-title">已添加的搜索引擎</h3>
+                    <div id="custom-search-list" class="custom-search-list">
+                        <!-- 这里将通过JavaScript动态添加已保存的搜索引擎 -->
+                    </div>
+                </div>
+                <div class="settings-section">
+                    <h3 class="settings-title">添加搜索引擎</h3>
+                </div>
+                <div class="settings-section custom-search-engine">
+                    <div class="settings-row">
+                        <label for="custom-search-name">搜索引擎名称</label>
+                        <input type="text" id="custom-search-name" placeholder="例如：知乎搜索">
+                    </div>
+                    <div class="settings-row">
+                        <label for="custom-search-url">搜索URL</label>
+                        <input type="text" id="custom-search-url" placeholder="例如：https://www.zhihu.com/search?q={q}">
+                        <small class="input-tip">可以手动添加{q}指定搜索词位置，若不添加则自动追加到URL末尾</small>
+                    </div>
+                    <div class="settings-row">
+                        <label for="custom-search-icon">图标URL（可选）</label>
+                        <input type="text" id="custom-search-icon" placeholder="例如：https://www.zhihu.com/favicon.ico">
+                        <small class="input-tip">留空将使用默认图标</small>
+                    </div>
+                    <div class="settings-row">
+                        <button id="save-custom-search" class="primary-button">
+                            <i class="fas fa-plus"></i> 添加搜索引擎
+                        </button>
+                    </div>
+                </div>
+                <!-- 可以在这里添加更多设置选项 -->
+            </div>
+        </div>
+    </div>
+
+    <div id="online-version-notice" class="hidden">
+        <p>您正在使用在线版本。想要获得更好的体验，请考虑<a href="#" id="install-link">安装本地扩展</a>。<button id="notice-close" class="notice-close">&times;</button></p>
+    </div>
+    <button id="settings-button" class="settings-button fixed-bottom-right">
+        <i class="fas fa-cog"></i>
+    </button>
+    <script src="searchEngines.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
+
