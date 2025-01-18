@@ -2,7 +2,7 @@
 class AddonManager {
     constructor() {
         this.addons = new Map();
-        this.installedPlugins = new Set();
+        this.installedPlugins = new Map();
         this.loadInstalledPlugins();
     }
 
@@ -11,7 +11,7 @@ class AddonManager {
         try {
             const installedPlugins = JSON.parse(localStorage.getItem('installedPlugins')) || [];
             for (const pluginData of installedPlugins) {
-                const { code, styleCode } = pluginData;
+                const { id, code, styleCode } = pluginData;
                 await this.installPlugin(code, styleCode);
             }
             this.updateSettingsUI();
@@ -48,18 +48,15 @@ class AddonManager {
             }
 
             this.addons.set(plugin.id, plugin);
-            this.installedPlugins.add(plugin.id);
+            this.installedPlugins.set(plugin.id, { code, styleCode });
 
             // 保存到 localStorage
-            const installedPlugins = Array.from(this.installedPlugins).map(id => {
-                const plugin = this.addons.get(id);
-                return {
-                    id,
-                    code: code,
-                    styleCode: styleCode
-                };
-            });
-            localStorage.setItem('installedPlugins', JSON.stringify(installedPlugins));
+            const installedPluginsArray = Array.from(this.installedPlugins.entries()).map(([id, data]) => ({
+                id,
+                code: data.code,
+                styleCode: data.styleCode
+            }));
+            localStorage.setItem('installedPlugins', JSON.stringify(installedPluginsArray));
 
             if (plugin.initialize) {
                 await plugin.initialize();
@@ -92,15 +89,12 @@ class AddonManager {
         this.installedPlugins.delete(pluginId);
 
         // 更新 localStorage
-        const installedPlugins = Array.from(this.installedPlugins).map(id => {
-            const plugin = this.addons.get(id);
-            return {
-                id,
-                code: plugin.code,
-                styleCode: plugin.styleCode
-            };
-        });
-        localStorage.setItem('installedPlugins', JSON.stringify(installedPlugins));
+        const installedPluginsArray = Array.from(this.installedPlugins.entries()).map(([id, data]) => ({
+            id,
+            code: data.code,
+            styleCode: data.styleCode
+        }));
+        localStorage.setItem('installedPlugins', JSON.stringify(installedPluginsArray));
 
         this.updateSettingsUI();
         return true;
