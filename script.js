@@ -485,8 +485,8 @@ document.addEventListener('DOMContentLoaded', () => {
             selectedOption.querySelector('.search-engine-icon').src = icon;
             selectedOption.querySelector('.search-engine-name').textContent = name;
             
-            // 保存选择
-            localStorage.setItem('search-engine', value);
+            // 保存选择到 preferredSearchEngine
+            localStorage.setItem('preferredSearchEngine', value);
             
             // 关闭选项容器
             customSelect.classList.remove('active');
@@ -494,7 +494,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // 加载保存的搜索引擎
-    const savedSearchEngine = localStorage.getItem('search-engine');
+    const savedSearchEngine = localStorage.getItem('preferredSearchEngine') || 'baidu';
     if (savedSearchEngine) {
         const option = document.querySelector(`.option[data-value="${savedSearchEngine}"]`);
         if (option) {
@@ -508,28 +508,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
     /**
      * 执行搜索
-     * 根据当前选择的搜索引擎和搜索词进行搜索
+     * 使用搜索引擎管理器执行搜索
      */
     function performSearch() {
         const searchInput = document.getElementById('search-input');
         const searchTerm = searchInput.value.trim();
-        
         if (!searchTerm) return;
-        
-        // 获取当前选中的搜索引擎
-        const selectedEngine = localStorage.getItem('preferredSearchEngine') || 'baidu';
-        const searchEngineManager = new SearchEngineManager();
-        const allEngines = searchEngineManager.getAllEngines();
-        const engine = allEngines[selectedEngine];
-        
-        if (!engine) {
-            console.error('Selected search engine not found');
-            return;
-        }
-        
-        // 构建搜索URL
-        const searchUrl = `${engine.url}${engine.url.includes('?') ? '&' : '?'}${engine.queryParam}=${encodeURIComponent(searchTerm)}`;
-        window.location.href = searchUrl;
+        window.searchEngineManager.performSearch(searchTerm);
     }
 
     // 搜索事件监听
