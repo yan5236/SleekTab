@@ -175,7 +175,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // 安装链接（示例）
     installLink.addEventListener('click', (e) => {
         e.preventDefault();
-        alert('This is where you would provide instructions to install the extension.');
+        window.location.href = 'https://github.com/yan5236/SleekTab-crx';
     });
 
     /**
