@@ -31,6 +31,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const blurStrengthInput = document.getElementById('blur-strength');
     const blurValue = document.getElementById('blur-value');
     const enableDoubleClick = document.getElementById('enable-double-click');
+    const searchEngine = document.getElementById('search-engine');
 
     /**
      * 双击隐藏功能模块
@@ -289,6 +290,70 @@ document.addEventListener('DOMContentLoaded', () => {
         const strength = e.target.value;
         blurValue.textContent = `${strength}px`;
         updateBlurEffect(strength);
+    });
+
+    /**
+     * 搜索功能模块
+     * 实现搜索功能
+     */
+    // 添加搜索功能
+    function performSearch() {
+        const query = searchInput.value.trim();
+        if (!query) return;
+
+        const selectedEngine = searchEngine.value;
+        let searchUrl;
+
+        // 获取保存的自定义搜索引擎
+        const customSearchEngines = JSON.parse(localStorage.getItem('customSearchEngines') || '{}');
+        // 查找是否是自定义搜索引擎
+        const customEngine = customSearchEngines[selectedEngine];
+
+        if (customEngine) {
+            // 如果是自定义搜索引擎，使用其URL模板
+            const baseUrl = customEngine.url;
+            const queryParam = customEngine.queryParam;
+            searchUrl = `${baseUrl}${baseUrl.includes('?') ? '&' : '?'}${queryParam}=${encodeURIComponent(query)}`;
+        } else {
+            // 默认搜索引擎
+            switch (selectedEngine) {
+                case 'baidu':
+                    searchUrl = `https://www.baidu.com/s?wd=${encodeURIComponent(query)}`;
+                    break;
+                case 'google':
+                    searchUrl = `https://www.google.com/search?q=${encodeURIComponent(query)}`;
+                    break;
+                case 'bing':
+                    searchUrl = `https://www.bing.com/search?q=${encodeURIComponent(query)}`;
+                    break;
+                case 'sogou':
+                    searchUrl = `https://www.sogou.com/web?query=${encodeURIComponent(query)}`;
+                    break;
+                case 'duckduckgo':
+                    searchUrl = `https://duckduckgo.com/?q=${encodeURIComponent(query)}`;
+                    break;
+                case 'yandex':
+                    searchUrl = `https://yandex.com/search/?text=${encodeURIComponent(query)}`;
+                    break;
+                case 'github':
+                    searchUrl = `https://github.com/search?q=${encodeURIComponent(query)}`;
+                    break;
+                default:
+                    searchUrl = `https://www.baidu.com/s?wd=${encodeURIComponent(query)}`;
+            }
+        }
+
+        window.location.href = searchUrl;
+    }
+
+    // 点击搜索按钮时执行搜索
+    searchButton.addEventListener('click', performSearch);
+
+    // 在搜索框按回车时执行搜索
+    searchInput.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') {
+            performSearch();
+        }
     });
 });
 
