@@ -459,52 +459,7 @@ document.addEventListener('DOMContentLoaded', () => {
      * 实现搜索功能
      */
     // 初始化搜索引擎选择器
-    let currentSearchEngine = 'baidu';
-
-    // 点击选择器显示/隐藏选项
-    selectedOption.addEventListener('click', () => {
-        customSelect.classList.toggle('active');
-    });
-
-    // 点击其他地方关闭选项
-    document.addEventListener('click', (e) => {
-        if (!customSelect.contains(e.target)) {
-            customSelect.classList.remove('active');
-        }
-    });
-
-    // 选择搜索引擎
-    options.forEach(option => {
-        option.addEventListener('click', () => {
-            const value = option.getAttribute('data-value');
-            const icon = option.getAttribute('data-icon');
-            const name = option.querySelector('span').textContent;
-            
-            // 更新选中的选项
-            currentSearchEngine = value;
-            selectedOption.querySelector('.search-engine-icon').src = icon;
-            selectedOption.querySelector('.search-engine-name').textContent = name;
-            
-            // 保存选择到 preferredSearchEngine
-            localStorage.setItem('preferredSearchEngine', value);
-            
-            // 关闭选项容器
-            customSelect.classList.remove('active');
-        });
-    });
-
-    // 加载保存的搜索引擎
-    const savedSearchEngine = localStorage.getItem('preferredSearchEngine') || 'baidu';
-    if (savedSearchEngine) {
-        const option = document.querySelector(`.option[data-value="${savedSearchEngine}"]`);
-        if (option) {
-            const icon = option.getAttribute('data-icon');
-            const name = option.querySelector('span').textContent;
-            currentSearchEngine = savedSearchEngine;
-            selectedOption.querySelector('.search-engine-icon').src = icon;
-            selectedOption.querySelector('.search-engine-name').textContent = name;
-        }
-    }
+    let currentSearchEngine = localStorage.getItem('preferredSearchEngine') || 'baidu';
 
     /**
      * 执行搜索
@@ -524,9 +479,6 @@ document.addEventListener('DOMContentLoaded', () => {
             performSearch();
         }
     });
-
-    // 初始化时更新一次搜索引擎选项
-    updateSearchEngineOptions();
 
     // 便签功能
     let stickyNotes = JSON.parse(localStorage.getItem('stickyNotes') || '[]');
