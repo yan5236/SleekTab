@@ -330,18 +330,19 @@ class SearchEngineManager {
      */
     performSearch(searchTerm) {
         if (!searchTerm) return;
-
-        const select = document.getElementById('search-engine');
-        const selectedEngine = select.value;
+        
+        // 获取当前选中的搜索引擎
+        const selectedEngine = localStorage.getItem('preferredSearchEngine') || 'baidu';
         const allEngines = this.getAllEngines();
         const engine = allEngines[selectedEngine];
         
         if (!engine) {
-            throw new Error('请选择有效的搜索引擎！');
+            console.error('Selected search engine not found');
+            return;
         }
-
-        // 构建搜索URL并执行搜索
-        const searchUrl = `${engine.url}?${engine.queryParam}=${encodeURIComponent(searchTerm)}`;
+        
+        // 构建搜索URL
+        const searchUrl = `${engine.url}${engine.url.includes('?') ? '&' : '?'}${engine.queryParam}=${encodeURIComponent(searchTerm)}`;
         window.location.href = searchUrl;
     }
 
