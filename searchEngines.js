@@ -239,49 +239,89 @@ class SearchEngineManager {
      * 更新主页面上的搜索引擎下拉选择框
      */
     updateSearchEngineSelect() {
-        const select = document.getElementById('search-engine');
-        if (!select) return;
+        const optionsContainer = document.querySelector('.options-container');
+        if (!optionsContainer) return;
         
         const allEngines = this.getAllEngines();
-        select.innerHTML = '';
+        optionsContainer.innerHTML = '';
         
-        Object.entries(allEngines).forEach(([id, engine]) => {
-            const option = document.createElement('option');
-            option.value = id;
-            option.textContent = engine.name;
-            option.setAttribute('data-icon', engine.icon || 'default-icon.png');
-            select.appendChild(option);
-        });
-
-        // 设置选中的搜索引擎
+        // 获取保存的搜索引擎
         const savedEngine = localStorage.getItem('preferredSearchEngine') || 'baidu';
-        if (allEngines[savedEngine]) {
-            select.value = savedEngine;
-        } else {
-            select.value = 'baidu';
-        }
         
-        this.updateSearchEngineIcon();
+        // 添加所有搜索引擎（默认 + 自定义）
+        Object.entries(allEngines).forEach(([id, engine]) => {
+            const option = document.createElement('div');
+            option.className = 'option';
+            option.setAttribute('data-value', id);
+            option.setAttribute('data-icon', engine.icon || 'default-icon.png');
+            option.innerHTML = `
+                <img src="${engine.icon}" alt="${engine.name}" class="search-engine-icon" onerror="this.src='default-icon.png'">
+                <span>${engine.name}</span>
+            `;
+            optionsContainer.appendChild(option);
+            
+            // 如果是当前选中的搜索引擎，更新显示
+            if (id === savedEngine) {
+                const selectedOption = document.querySelector('.selected-option');
+                if (selectedOption) {
+                    selectedOption.innerHTML = `
+                        <img src="${engine.icon}" alt="${engine.name}" class="search-engine-icon" onerror="this.src='default-icon.png'">
+                        <span class="search-engine-name">${engine.name}</span>
+                        <i class="fas fa-chevron-down"></i>
+                    `;
+                }
+            }
+        });
+        
+        // 重新绑定点击事件
+        this.initSearchEngineSelectEvents();
     }
-
+    
     /**
-     * 更新搜索引擎图标
-     * 更新搜索引擎选择器的图标显示
+     * 初始化搜索引擎选择器的事件
      */
-    updateSearchEngineIcon() {
-        const select = document.getElementById('search-engine');
-        if (!select) return;
+    initSearchEngineSelectEvents() {
+        const customSelect = document.querySelector('.custom-select');
+        const selectedOption = document.querySelector('.selected-option');
+        const optionsContainer = document.querySelector('.options-container');
+        const options = document.querySelectorAll('.option');
         
-        const selectedOption = select.options[select.selectedIndex];
-        if (!selectedOption) return;
+        if (!customSelect || !selectedOption || !optionsContainer) return;
         
-        const iconUrl = selectedOption.getAttribute('data-icon');
-        if (!iconUrl) return;
+        // 点击选择器时显示/隐藏选项
+        selectedOption.addEventListener('click', () => {
+            optionsContainer.classList.toggle('active');
+            selectedOption.classList.toggle('active');
+        });
         
-        const arrowColor = document.body.classList.contains('dark-theme') ? '%23fff' : '%23666';
-        const arrowSvg = `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='${arrowColor}' d='M6 8.825L1.175 4 2.238 2.938 6 6.7l3.763-3.763L10.825 4z'/%3E%3C/svg%3E")`;
+        // 点击选项时更新选择器
+        options.forEach(option => {
+            option.addEventListener('click', () => {
+                const value = option.getAttribute('data-value');
+                const icon = option.getAttribute('data-icon');
+                const name = option.querySelector('span').textContent;
+                
+                selectedOption.innerHTML = `
+                    <img src="${icon}" alt="${name}" class="search-engine-icon" onerror="this.src='default-icon.png'">
+                    <span class="search-engine-name">${name}</span>
+                    <i class="fas fa-chevron-down"></i>
+                `;
+                
+                optionsContainer.classList.remove('active');
+                selectedOption.classList.remove('active');
+                
+                // 保存选择
+                localStorage.setItem('preferredSearchEngine', value);
+            });
+        });
         
-        select.style.backgroundImage = `url('${iconUrl}'), ${arrowSvg}`;
+        // 点击其他地方时关闭选项列表
+        document.addEventListener('click', (e) => {
+            if (!customSelect.contains(e.target)) {
+                optionsContainer.classList.remove('active');
+                selectedOption.classList.remove('active');
+            }
+        });
     }
 
     /**

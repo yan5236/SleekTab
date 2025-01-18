@@ -36,6 +36,8 @@ h1, h2 {
     display: flex;
     margin-bottom: 2rem;
     padding: 0.5rem;
+    position: relative;
+    z-index: 1100;
 }
 
 .search-wrapper {
@@ -98,6 +100,8 @@ h1, h2 {
 }
 
 .bookmarks-container {
+    position: relative;
+    z-index: 1000;
     margin-bottom: 2rem;
 }
 
@@ -241,12 +245,38 @@ body.dark-theme #theme-select {
     background-color: rgba(0, 0, 0, 0.5);
     z-index: 1000;
     backdrop-filter: blur(5px);
+    -webkit-backdrop-filter: blur(5px);
 }
 
 .modal.show {
     display: flex;
     justify-content: center;
     align-items: center;
+}
+
+@media screen and (max-width: 768px) {
+    .modal.show {
+        align-items: flex-start;
+    }
+
+    .modal.show ~ .container {
+        display: none;
+    }
+
+    .modal-content {
+        width: 100% !important;
+        height: 100% !important;
+        margin: 0 !important;
+        border-radius: 0 !important;
+    }
+
+    .container {
+        transition: visibility 0.3s ease;
+    }
+
+    .container[style*="visibility: hidden"] {
+        display: none;
+    }
 }
 
 .modal-content {
@@ -511,6 +541,7 @@ body.dark-theme #clock {
     min-width: 120px;
     color: #333;
     border: 1px solid rgba(255, 255, 255, 0.2);
+    z-index: 1100;
 }
 
 .search-engine-select:hover {
@@ -807,6 +838,7 @@ body.dark-theme .settings-row input::placeholder {
     min-width: 120px;
     color: #333;
     border: 1px solid rgba(255, 255, 255, 0.2);
+    z-index: 1100;
 }
 
 .input-tip {
@@ -1064,5 +1096,775 @@ body.dark-theme .settings-row input {
 
 body.dark-theme .input-tip {
     color: #aaa;
+}
+
+/* 移动端响应式样式 */
+@media screen and (max-width: 768px) {
+    body {
+        padding: 0;
+        background-attachment: initial;
+    }
+
+    .container {
+        background: none;
+        box-shadow: none;
+        backdrop-filter: none;
+        -webkit-backdrop-filter: none;
+        padding: 1rem;
+        margin: 0;
+        width: 100%;
+        max-width: none;
+        border-radius: 0;
+    }
+
+    #clock {
+        font-size: 2rem;
+        top: 1rem;
+        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+    }
+
+    .search-container {
+        margin-top: 4rem;
+        padding: 0 1rem;
+    }
+
+    .search-wrapper {
+        flex-direction: column;
+        gap: 0;
+        padding: 1rem;
+        background: var(--search-bg-color, rgba(255, 255, 255, var(--search-bg-opacity)));
+        border-radius: 1rem;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        backdrop-filter: blur(var(--blur-strength));
+        -webkit-backdrop-filter: blur(var(--blur-strength));
+        border: none;
+    }
+
+    .search-engine-select {
+        width: 100%;
+        padding: 0.5rem 0;
+        margin-bottom: 0.5rem;
+        font-size: 1rem;
+        background-color: transparent;
+        border: none;
+        text-align: left;
+        color: var(--text-color, #333);
+        min-width: auto;
+        background-position: left center, right 0.5rem center;
+        background-size: 16px 16px, 12px 12px;
+        padding-left: 24px;
+    }
+
+    #search-input {
+        width: 100%;
+        padding: 0.5rem 0;
+        font-size: 1rem;
+        border: none;
+        border-bottom: 1px solid var(--border-color, rgba(0, 0, 0, 0.1));
+        border-radius: 0;
+        background: transparent;
+        color: var(--text-color, #333);
+    }
+
+    #search-input::placeholder {
+        color: var(--placeholder-color, rgba(0, 0, 0, 0.4));
+    }
+
+    #search-button {
+        width: 100%;
+        padding: 0.75rem;
+        font-size: 1rem;
+        border-radius: 0.5rem;
+        margin-top: 0.75rem;
+        background-color: var(--button-color, #4285f4);
+        color: #fff;
+    }
+
+    .bookmarks-container {
+        margin-top: 1.5rem;
+        padding: 0 1rem;
+    }
+
+    .bookmarks-container h2 {
+        font-size: 0.875rem;
+        color: var(--text-color-secondary, rgba(0, 0, 0, 0.7));
+        margin-bottom: 1rem;
+        margin-left: 0.5rem;
+    }
+
+    #bookmarks-list {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 1.5rem 2rem;
+        padding: 0;
+    }
+
+    .bookmark {
+        padding: 0;
+        background: none;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .bookmark img {
+        width: 3rem;
+        height: 3rem;
+        margin-bottom: 0.5rem;
+        border-radius: 0.75rem;
+    }
+
+    .bookmark span {
+        font-size: 0.75rem;
+        color: var(--text-color-secondary, rgba(0, 0, 0, 0.7));
+        text-align: center;
+        max-width: 100%;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        word-break: break-all;
+    }
+
+    /* 设置按钮样式 */
+    .settings-button {
+        bottom: 1rem;
+        right: 1rem;
+        font-size: 1.25rem;
+        padding: 0.75rem;
+        background: var(--settings-button-bg, rgba(0, 0, 0, 0.3));
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+        border-radius: 50%;
+        color: #fff;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+    }
+
+    /* 设置面板样式 */
+    .modal-content {
+        width: 100%;
+        height: 100%;
+        margin: 0;
+        border-radius: 0;
+    }
+
+    .modal-header {
+        padding: 1rem;
+    }
+
+    .modal-body {
+        padding: 1rem;
+    }
+
+    .settings-section {
+        margin-bottom: 1.5rem;
+    }
+
+    /* 深色主题适配 */
+    body.dark-theme .search-wrapper {
+        --search-bg-color: rgba(40, 40, 40, var(--search-bg-opacity));
+        --text-color: rgba(255, 255, 255, 0.9);
+        --text-color-secondary: rgba(255, 255, 255, 0.7);
+        --border-color: rgba(255, 255, 255, 0.2);
+        --placeholder-color: rgba(255, 255, 255, 0.4);
+        --button-color: #78a9ff;
+        --settings-button-bg: rgba(255, 255, 255, 0.2);
+    }
+
+    body.dark-theme #search-button:hover {
+        background-color: #5c8eff;
+    }
+
+    body.dark-theme .bookmark span {
+        color: rgba(255, 255, 255, 0.7);
+    }
+
+    /* 移动端适配 */
+    @media screen and (max-width: 768px) {
+        .custom-select {
+            min-width: 100px;
+        }
+
+        .selected-option {
+            padding: 6px 8px;
+        }
+
+        .option {
+            padding: 6px 8px;
+        }
+
+        /* 当设置模态框打开时隐藏搜索框 */
+        .modal.show ~ .container .search-container {
+            display: none;
+        }
+    }
+
+    /* 移动端设置面板打开时隐藏搜索相关元素 */
+    @media (max-width: 768px) {
+        .modal:not([style*="display: none"]) ~ .container .search-wrapper,
+        .modal:not([style*="display: none"]) ~ .container .bookmarks-container {
+            display: none;
+        }
+    }
+}
+
+/* 超小屏幕设备的优化 */
+@media screen and (max-width: 320px) {
+    .search-container {
+        padding: 0 0.75rem;
+    }
+
+    .bookmarks-container {
+        padding: 0 0.75rem;
+    }
+
+    #bookmarks-list {
+        gap: 1rem 1.5rem;
+    }
+
+    .bookmark img {
+        width: 2.5rem;
+        height: 2.5rem;
+    }
+
+    .bookmark span {
+        font-size: 0.7rem;
+    }
+
+    .settings-button {
+        font-size: 1.3rem;
+        padding: 0.6rem;
+    }
+}
+
+.bookmarks-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.icon-button {
+    background: none;
+    border: none;
+    padding: 8px;
+    cursor: pointer;
+    border-radius: 50%;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.icon-button:hover {
+    background-color: rgba(0, 0, 0, 0.1);
+}
+
+.icon-button img {
+    width: 20px;
+    height: 20px;
+    opacity: 0.7;
+}
+
+.icon-button:hover img {
+    opacity: 1;
+}
+
+body.dark-theme .icon-button:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+.bookmarks-edit-container {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+#bookmarks-edit-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.bookmark-edit-item {
+    display: flex;
+    align-items: center;
+    padding: 0.5rem;
+    background: rgba(0, 0, 0, 0.05);
+    border-radius: 8px;
+    gap: 1rem;
+}
+
+.bookmark-edit-item img {
+    width: 24px;
+    height: 24px;
+}
+
+.bookmark-edit-info {
+    flex-grow: 1;
+}
+
+.bookmark-edit-name {
+    font-weight: 500;
+    margin-bottom: 0.25rem;
+}
+
+.bookmark-edit-url {
+    font-size: 0.85rem;
+    color: #666;
+}
+
+.bookmark-edit-actions {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.bookmark-edit-actions button {
+    padding: 4px 8px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: all 0.2s ease;
+}
+
+.edit-btn {
+    background-color: #4285f4;
+    color: white;
+}
+
+.edit-btn:hover {
+    background-color: #3367d6;
+}
+
+.delete-btn {
+    background-color: #dc3545;
+    color: white;
+}
+
+.delete-btn:hover {
+    background-color: #c82333;
+}
+
+body.dark-theme .bookmark-edit-item {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+body.dark-theme .bookmark-edit-url {
+    color: #aaa;
+}
+
+/* 添加书签时的悬浮效果 */
+.bookmark {
+    position: relative;
+}
+
+.bookmark .bookmark-actions {
+    position: absolute;
+    top: 0;
+    right: 0;
+    display: none;
+    gap: 4px;
+    padding: 4px;
+    background: rgba(0, 0, 0, 0.6);
+    border-radius: 4px;
+}
+
+.bookmark:hover .bookmark-actions {
+    display: flex;
+}
+
+.bookmark-action-btn {
+    padding: 4px;
+    background: none;
+    border: none;
+    color: white;
+    cursor: pointer;
+    opacity: 0.8;
+    transition: opacity 0.2s ease;
+}
+
+.bookmark-action-btn:hover {
+    opacity: 1;
+}
+
+.custom-select {
+    position: relative;
+    min-width: 120px;
+    cursor: pointer;
+}
+
+.selected-option {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 12px;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 8px;
+    transition: all 0.3s ease;
+}
+
+.selected-option:hover {
+    background: rgba(255, 255, 255, 0.3);
+}
+
+.search-engine-icon {
+    width: 16px;
+    height: 16px;
+    object-fit: contain;
+}
+
+.search-engine-name {
+    font-size: 14px;
+    color: #333;
+    white-space: nowrap;
+}
+
+.selected-option i {
+    margin-left: auto;
+    transition: transform 0.3s ease;
+}
+
+.custom-select.active .selected-option i {
+    transform: rotate(180deg);
+}
+
+.options-container {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    width: 100%;
+    max-height: 0;
+    overflow: hidden;
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: 8px;
+    margin-top: 4px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    opacity: 0;
+    transition: all 0.3s ease;
+    z-index: 1000;
+}
+
+.custom-select.active .options-container {
+    max-height: 300px;
+    opacity: 1;
+    overflow-y: auto;
+    padding: 8px 0;
+}
+
+.option {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 12px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.option:hover {
+    background-color: rgba(0, 0, 0, 0.05);
+}
+
+.option span {
+    font-size: 14px;
+    color: #333;
+}
+
+.option-separator {
+    padding: 8px 12px;
+    font-size: 12px;
+    color: #666;
+    background-color: rgba(0, 0, 0, 0.02);
+    border-top: 1px solid rgba(0, 0, 0, 0.05);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+    margin: 4px 0;
+}
+
+/* 深色主题样式 */
+body.dark-theme .search-engine-name {
+    color: #fff;
+}
+
+body.dark-theme .selected-option i {
+    color: #fff;
+}
+
+body.dark-theme .options-container {
+    background: rgba(40, 40, 40, 0.95);
+}
+
+body.dark-theme .option:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+body.dark-theme .option span {
+    color: #fff;
+}
+
+body.dark-theme .option-separator {
+    color: #999;
+    background-color: rgba(255, 255, 255, 0.05);
+    border-color: rgba(255, 255, 255, 0.1);
+}
+
+/* 移动端适配 */
+@media screen and (max-width: 768px) {
+    .custom-select {
+        min-width: 100px;
+    }
+
+    .selected-option {
+        padding: 6px 8px;
+    }
+
+    .option {
+        padding: 6px 8px;
+    }
+
+    /* 当设置模态框打开时隐藏搜索框 */
+    .modal.show ~ .container .search-container {
+        display: none;
+    }
+}
+
+/* 便签样式 */
+.sticky-note {
+    position: absolute;
+    min-width: 200px;
+    min-height: 200px;
+    background-color: rgba(255, 255, 224, 0.9);
+    border-radius: 5px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    padding: 15px;
+    cursor: move;
+    z-index: 1000;
+    resize: both;
+    overflow: auto;
+}
+
+.sticky-note.locked {
+    cursor: default;
+    resize: none;
+}
+
+.sticky-note-header {
+    display: flex;
+    justify-content: flex-end;
+    gap: 5px;
+    margin-bottom: 10px;
+}
+
+.sticky-note-content {
+    width: 100%;
+    height: calc(100% - 40px);
+    border: none;
+    background: transparent;
+    resize: none;
+    font-family: inherit;
+    line-height: 1.5;
+}
+
+.sticky-note-content:focus {
+    outline: none;
+}
+
+.sticky-note-btn {
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    padding: 2px;
+    font-size: 14px;
+    color: #666;
+    transition: color 0.3s;
+}
+
+.sticky-note-btn:hover {
+    color: #000;
+}
+
+.sticky-note.locked .sticky-note-content {
+    cursor: default;
+    user-select: none;
+}
+
+/* 右键菜单样式 */
+.context-menu {
+    position: fixed;
+    background: white;
+    border-radius: 5px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    padding: 5px 0;
+    z-index: 1001;
+}
+
+.context-menu-item {
+    padding: 8px 15px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.context-menu-item:hover {
+    background-color: #f0f0f0;
+}
+
+/* 附加功能样式 */
+.addon-list {
+    margin-top: 10px;
+}
+
+.addon-item {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    padding: 10px;
+    border-radius: 8px;
+    background: var(--modal-background);
+    margin-bottom: 10px;
+    flex-wrap: wrap;
+}
+
+.addon-item label {
+    flex: 1;
+    margin-right: 15px;
+    font-weight: 500;
+}
+
+.addon-item .input-tip {
+    flex-basis: 100%;
+    margin-top: 5px;
+    color: var(--text-secondary);
+}
+
+.addon-item .toggle-switch {
+    margin-left: auto;
+}
+
+/* 便签样式优化 */
+.sticky-note {
+    position: fixed;
+    min-width: 200px;
+    min-height: 150px;
+    background: var(--sticky-note-bg, #ffd700);
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    resize: both;
+}
+
+.sticky-note.locked {
+    resize: none;
+}
+
+.sticky-note-header {
+    padding: 8px;
+    background: rgba(0, 0, 0, 0.1);
+    display: flex;
+    justify-content: flex-end;
+    gap: 5px;
+    cursor: move;
+}
+
+.sticky-note-btn {
+    background: none;
+    border: none;
+    color: rgba(0, 0, 0, 0.5);
+    cursor: pointer;
+    padding: 4px;
+    border-radius: 4px;
+    transition: all 0.2s;
+}
+
+.sticky-note-btn:hover {
+    background: rgba(0, 0, 0, 0.1);
+    color: rgba(0, 0, 0, 0.8);
+}
+
+.sticky-note-content {
+    flex: 1;
+    padding: 10px;
+    border: none;
+    background: none;
+    resize: none;
+    font-family: inherit;
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+.sticky-note-content:focus {
+    outline: none;
+}
+
+.context-menu {
+    position: fixed;
+    background: var(--modal-background);
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    z-index: 1001;
+    min-width: 150px;
+}
+
+.context-menu-item {
+    padding: 8px 16px;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.context-menu-item:hover {
+    background: var(--hover-background);
+}
+
+/* 插件管理样式 */
+.install-plugin-btn {
+    width: 100%;
+    margin-bottom: 20px;
+}
+
+.addon-controls {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.uninstall-btn {
+    background: none;
+    border: none;
+    color: #dc3545;
+    cursor: pointer;
+    padding: 8px;
+    border-radius: 4px;
+    transition: all 0.2s ease;
+}
+
+.uninstall-btn:hover {
+    background-color: rgba(220, 53, 69, 0.1);
+}
+
+.plugin-code-input {
+    width: 100%;
+    min-height: 300px;
+    margin: 15px 0;
+    padding: 10px;
+    font-family: monospace;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    resize: vertical;
+}
+
+body.dark-theme .plugin-code-input {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: rgba(255, 255, 255, 0.1);
+    color: #fff;
+}
+
+body.dark-theme .uninstall-btn {
+    color: #ff6b6b;
+}
+
+body.dark-theme .uninstall-btn:hover {
+    background-color: rgba(255, 107, 107, 0.1);
 }
 

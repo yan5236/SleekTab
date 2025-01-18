@@ -31,7 +31,11 @@ document.addEventListener('DOMContentLoaded', () => {
     const blurStrengthInput = document.getElementById('blur-strength');
     const blurValue = document.getElementById('blur-value');
     const enableDoubleClick = document.getElementById('enable-double-click');
-    const searchEngine = document.getElementById('search-engine');
+    const showBookmarkActions = document.getElementById('show-bookmark-actions');
+    const customSelect = document.querySelector('.custom-select');
+    const selectedOption = document.querySelector('.selected-option');
+    const optionsContainer = document.querySelector('.options-container');
+    const options = document.querySelectorAll('.option');
 
     /**
      * 双击隐藏功能模块
@@ -124,6 +128,37 @@ document.addEventListener('DOMContentLoaded', () => {
         { name: '哔哩哔哩', url: 'https://www.bilibili.com', icon: 'https://www.bilibili.com/favicon.ico' },
     ];
 
+    // 加载显示编辑按钮设置
+    const savedShowBookmarkActions = localStorage.getItem('show-bookmark-actions');
+    showBookmarkActions.checked = savedShowBookmarkActions === null ? true : savedShowBookmarkActions === 'true';
+    updateBookmarkActionsVisibility(showBookmarkActions.checked);
+
+    // 监听显示编辑按钮设置变化
+    showBookmarkActions.addEventListener('change', () => {
+        localStorage.setItem('show-bookmark-actions', showBookmarkActions.checked);
+        updateBookmarkActionsVisibility(showBookmarkActions.checked);
+    });
+
+    // 更新编辑按钮显示状态
+    function updateBookmarkActionsVisibility(show) {
+        const style = document.getElementById('bookmark-actions-style') || document.createElement('style');
+        style.id = 'bookmark-actions-style';
+        if (!show) {
+            style.textContent = `
+                .bookmark .bookmark-actions { display: none !important; }
+                .bookmark:hover .bookmark-actions { display: none !important; }
+            `;
+        } else {
+            style.textContent = `
+                .bookmark .bookmark-actions { display: none; }
+                .bookmark:hover .bookmark-actions { display: flex; }
+            `;
+        }
+        if (!style.parentNode) {
+            document.head.appendChild(style);
+        }
+    }
+
     // 加载书签
     function loadBookmarks() {
         const bookmarks = JSON.parse(localStorage.getItem('bookmarks')) || defaultBookmarks;
@@ -135,10 +170,118 @@ document.addEventListener('DOMContentLoaded', () => {
             bookmarkElement.innerHTML = `
                 <img src="${bookmark.icon}" alt="${bookmark.name}" onerror="this.src='default-icon.png'">
                 <span>${bookmark.name}</span>
+                <div class="bookmark-actions">
+                    <button class="bookmark-action-btn" onclick="editBookmark(event, '${bookmark.name}')">
+                        <i class="fas fa-edit"></i>
+                    </button>
+                    <button class="bookmark-action-btn" onclick="deleteBookmark(event, '${bookmark.name}')">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                </div>
             `;
             bookmarksList.appendChild(bookmarkElement);
         });
+        updateBookmarksEditList();
+        // 更新编辑按钮显示状态
+        updateBookmarkActionsVisibility(showBookmarkActions.checked);
     }
+
+    // 更新编辑列表
+    function updateBookmarksEditList() {
+        const bookmarksEditList = document.getElementById('bookmarks-edit-list');
+        const bookmarks = JSON.parse(localStorage.getItem('bookmarks')) || defaultBookmarks;
+        
+        bookmarksEditList.innerHTML = '';
+        bookmarks.forEach(bookmark => {
+            const item = document.createElement('div');
+            item.className = 'bookmark-edit-item';
+            item.innerHTML = `
+                <img src="${bookmark.icon}" alt="${bookmark.name}" onerror="this.src='default-icon.png'">
+                <div class="bookmark-edit-info">
+                    <div class="bookmark-edit-name">${bookmark.name}</div>
+                    <div class="bookmark-edit-url">${bookmark.url}</div>
+                </div>
+                <div class="bookmark-edit-actions">
+                    <button class="edit-btn" onclick="editBookmark(event, '${bookmark.name}')">编辑</button>
+                    <button class="delete-btn" onclick="deleteBookmark(event, '${bookmark.name}')">删除</button>
+                </div>
+            `;
+            bookmarksEditList.appendChild(item);
+        });
+    }
+
+    // 初始化编辑功能
+    function initBookmarkEdit() {
+        const editButton = document.getElementById('edit-bookmarks-button');
+        const bookmarksModal = document.getElementById('bookmarks-modal');
+        const bookmarkFormModal = document.getElementById('bookmark-form-modal');
+        const addBookmarkButton = document.getElementById('add-bookmark');
+        const saveBookmarkButton = document.getElementById('save-bookmark');
+        const closeButtons = document.querySelectorAll('.close-modal');
+
+        // 打开编辑模态框
+        editButton.addEventListener('click', () => {
+            bookmarksModal.classList.add('show');
+            updateBookmarksEditList();
+        });
+
+        // 关闭模态框
+        closeButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                button.closest('.modal').classList.remove('show');
+            });
+        });
+
+        // 添加新书签
+        addBookmarkButton.addEventListener('click', () => {
+            document.getElementById('bookmark-form-title').textContent = '添加快速访问';
+            document.getElementById('bookmark-name').value = '';
+            document.getElementById('bookmark-url').value = '';
+            document.getElementById('bookmark-icon').value = '';
+            document.getElementById('save-bookmark').removeAttribute('data-edit');
+            bookmarkFormModal.classList.add('show');
+        });
+
+        // 保存书签
+        saveBookmarkButton.addEventListener('click', () => {
+            const name = document.getElementById('bookmark-name').value.trim();
+            const url = document.getElementById('bookmark-url').value.trim();
+            const icon = document.getElementById('bookmark-icon').value.trim();
+            
+            if (!name || !url) {
+                alert('请填写名称和网址！');
+                return;
+            }
+
+            const bookmarks = JSON.parse(localStorage.getItem('bookmarks')) || defaultBookmarks;
+            const editName = saveBookmarkButton.getAttribute('data-edit');
+            
+            if (editName) {
+                // 编辑现有书签
+                const index = bookmarks.findIndex(b => b.name === editName);
+                if (index !== -1) {
+                    bookmarks[index] = { name, url, icon };
+                }
+            } else {
+                // 添加新书签
+                bookmarks.push({ name, url, icon });
+            }
+
+            localStorage.setItem('bookmarks', JSON.stringify(bookmarks));
+            bookmarkFormModal.classList.remove('show');
+            loadBookmarks();
+        });
+
+        // 点击模态框外部关闭
+        window.addEventListener('click', (e) => {
+            if (e.target.classList.contains('modal')) {
+                e.target.classList.remove('show');
+            }
+        });
+    }
+
+    // 初始化编辑功能
+    initBookmarkEdit();
 
     /**
      * 主题切换模块
@@ -244,28 +387,47 @@ document.addEventListener('DOMContentLoaded', () => {
     const settingsButton = document.getElementById('settings-button');
     const settingsModal = document.getElementById('settings-modal');
     const closeModalButton = document.querySelector('.close-modal');
+    const container = document.querySelector('.container');
 
     // 打开设置模态框
     settingsButton.addEventListener('click', () => {
         settingsModal.classList.add('show');
+        settingsModal.style.display = 'flex';
+        if (window.innerWidth <= 768) {
+            container.style.visibility = 'hidden';
+        }
     });
 
     // 关闭设置模态框
-    closeModalButton.addEventListener('click', () => {
+    function closeSettingsModal() {
         settingsModal.classList.remove('show');
-    });
+        settingsModal.style.display = 'none';
+        if (window.innerWidth <= 768) {
+            container.style.visibility = 'visible';
+        }
+    }
+
+    // 关闭按钮点击事件
+    closeModalButton.addEventListener('click', closeSettingsModal);
 
     // 点击模态框外部关闭
     settingsModal.addEventListener('click', (e) => {
         if (e.target === settingsModal) {
-            settingsModal.classList.remove('show');
+            closeSettingsModal();
         }
     });
 
     // 按ESC键关闭模态框
     document.addEventListener('keydown', (e) => {
         if (e.key === 'Escape' && settingsModal.classList.contains('show')) {
-            settingsModal.classList.remove('show');
+            closeSettingsModal();
+        }
+    });
+
+    // 监听窗口大小变化
+    window.addEventListener('resize', () => {
+        if (settingsModal.classList.contains('show')) {
+            container.style.visibility = window.innerWidth <= 768 ? 'hidden' : 'visible';
         }
     });
 
@@ -296,64 +458,370 @@ document.addEventListener('DOMContentLoaded', () => {
      * 搜索功能模块
      * 实现搜索功能
      */
-    // 添加搜索功能
+    // 初始化搜索引擎选择器
+    let currentSearchEngine = 'baidu';
+
+    // 点击选择器显示/隐藏选项
+    selectedOption.addEventListener('click', () => {
+        customSelect.classList.toggle('active');
+    });
+
+    // 点击其他地方关闭选项
+    document.addEventListener('click', (e) => {
+        if (!customSelect.contains(e.target)) {
+            customSelect.classList.remove('active');
+        }
+    });
+
+    // 选择搜索引擎
+    options.forEach(option => {
+        option.addEventListener('click', () => {
+            const value = option.getAttribute('data-value');
+            const icon = option.getAttribute('data-icon');
+            const name = option.querySelector('span').textContent;
+            
+            // 更新选中的选项
+            currentSearchEngine = value;
+            selectedOption.querySelector('.search-engine-icon').src = icon;
+            selectedOption.querySelector('.search-engine-name').textContent = name;
+            
+            // 保存选择
+            localStorage.setItem('search-engine', value);
+            
+            // 关闭选项容器
+            customSelect.classList.remove('active');
+        });
+    });
+
+    // 加载保存的搜索引擎
+    const savedSearchEngine = localStorage.getItem('search-engine');
+    if (savedSearchEngine) {
+        const option = document.querySelector(`.option[data-value="${savedSearchEngine}"]`);
+        if (option) {
+            const icon = option.getAttribute('data-icon');
+            const name = option.querySelector('span').textContent;
+            currentSearchEngine = savedSearchEngine;
+            selectedOption.querySelector('.search-engine-icon').src = icon;
+            selectedOption.querySelector('.search-engine-name').textContent = name;
+        }
+    }
+
+    // 更新搜索功能
     function performSearch() {
         const query = searchInput.value.trim();
         if (!query) return;
 
-        const selectedEngine = searchEngine.value;
-        let searchUrl;
+        const customEngines = JSON.parse(localStorage.getItem('customSearchEngines') || '{}');
+        const allEngines = { ...defaultSearchEngines, ...customEngines };
+        const engine = allEngines[currentSearchEngine];
 
-        // 获取保存的自定义搜索引擎
-        const customSearchEngines = JSON.parse(localStorage.getItem('customSearchEngines') || '{}');
-        // 查找是否是自定义搜索引擎
-        const customEngine = customSearchEngines[selectedEngine];
-
-        if (customEngine) {
-            // 如果是自定义搜索引擎，使用其URL模板
-            const baseUrl = customEngine.url;
-            const queryParam = customEngine.queryParam;
-            searchUrl = `${baseUrl}${baseUrl.includes('?') ? '&' : '?'}${queryParam}=${encodeURIComponent(query)}`;
-        } else {
-            // 默认搜索引擎
-            switch (selectedEngine) {
-                case 'baidu':
-                    searchUrl = `https://www.baidu.com/s?wd=${encodeURIComponent(query)}`;
-                    break;
-                case 'google':
-                    searchUrl = `https://www.google.com/search?q=${encodeURIComponent(query)}`;
-                    break;
-                case 'bing':
-                    searchUrl = `https://www.bing.com/search?q=${encodeURIComponent(query)}`;
-                    break;
-                case 'sogou':
-                    searchUrl = `https://www.sogou.com/web?query=${encodeURIComponent(query)}`;
-                    break;
-                case 'duckduckgo':
-                    searchUrl = `https://duckduckgo.com/?q=${encodeURIComponent(query)}`;
-                    break;
-                case 'yandex':
-                    searchUrl = `https://yandex.com/search/?text=${encodeURIComponent(query)}`;
-                    break;
-                case 'github':
-                    searchUrl = `https://github.com/search?q=${encodeURIComponent(query)}`;
-                    break;
-                default:
-                    searchUrl = `https://www.baidu.com/s?wd=${encodeURIComponent(query)}`;
+        if (engine) {
+            let searchUrl = engine.url;
+            if (!searchUrl.includes('{q}')) {
+                searchUrl += (searchUrl.includes('?') ? '&' : '?') + 
+                           `${engine.queryParam}=${encodeURIComponent(query)}`;
+            } else {
+                searchUrl = searchUrl.replace('{q}', encodeURIComponent(query));
             }
+            window.location.href = searchUrl;
         }
-
-        window.location.href = searchUrl;
     }
 
-    // 点击搜索按钮时执行搜索
+    // 搜索事件监听
     searchButton.addEventListener('click', performSearch);
-
-    // 在搜索框按回车时执行搜索
     searchInput.addEventListener('keypress', (e) => {
         if (e.key === 'Enter') {
             performSearch();
         }
     });
+
+    // 初始化时更新一次搜索引擎选项
+    updateSearchEngineOptions();
+
+    // 便签功能
+    let stickyNotes = JSON.parse(localStorage.getItem('stickyNotes') || '[]');
+    let contextMenu = null;
+
+    // 创建右键菜单
+    function createContextMenu(x, y) {
+        // 如果已经存在菜单，先移除
+        if (contextMenu) {
+            document.body.removeChild(contextMenu);
+        }
+
+        contextMenu = document.createElement('div');
+        contextMenu.className = 'context-menu';
+        contextMenu.style.left = `${x}px`;
+        contextMenu.style.top = `${y}px`;
+
+        const addNoteItem = document.createElement('div');
+        addNoteItem.className = 'context-menu-item';
+        addNoteItem.textContent = '添加便签';
+        addNoteItem.onclick = () => {
+            createStickyNote(x, y);
+            removeContextMenu();
+        };
+
+        contextMenu.appendChild(addNoteItem);
+        document.body.appendChild(contextMenu);
+    }
+
+    // 移除右键菜单
+    function removeContextMenu() {
+        if (contextMenu) {
+            document.body.removeChild(contextMenu);
+            contextMenu = null;
+        }
+    }
+
+    // 创建便签
+    function createStickyNote(x, y, noteData = null) {
+        const note = document.createElement('div');
+        note.className = 'sticky-note';
+        note.style.left = `${noteData ? noteData.x : x}px`;
+        note.style.top = `${noteData ? noteData.y : y}px`;
+        if (noteData && noteData.width) note.style.width = noteData.width;
+        if (noteData && noteData.height) note.style.height = noteData.height;
+
+        const header = document.createElement('div');
+        header.className = 'sticky-note-header';
+
+        const lockBtn = document.createElement('button');
+        lockBtn.className = 'sticky-note-btn';
+        lockBtn.innerHTML = '<i class="fas fa-lock-open"></i>';
+        lockBtn.title = '锁定/解锁';
+
+        const deleteBtn = document.createElement('button');
+        deleteBtn.className = 'sticky-note-btn';
+        deleteBtn.innerHTML = '<i class="fas fa-times"></i>';
+        deleteBtn.title = '删除';
+
+        header.appendChild(lockBtn);
+        header.appendChild(deleteBtn);
+
+        const content = document.createElement('textarea');
+        content.className = 'sticky-note-content';
+        content.value = noteData ? noteData.content : '';
+        content.placeholder = '在这里输入内容...';
+
+        note.appendChild(header);
+        note.appendChild(content);
+
+        // 拖动功能
+        let isDragging = false;
+        let currentX;
+        let currentY;
+        let initialX;
+        let initialY;
+
+        header.addEventListener('mousedown', (e) => {
+            if (!note.classList.contains('locked')) {
+                isDragging = true;
+                initialX = e.clientX - note.offsetLeft;
+                initialY = e.clientY - note.offsetTop;
+            }
+        });
+
+        document.addEventListener('mousemove', (e) => {
+            if (isDragging) {
+                e.preventDefault();
+                currentX = e.clientX - initialX;
+                currentY = e.clientY - initialY;
+                note.style.left = `${currentX}px`;
+                note.style.top = `${currentY}px`;
+            }
+        });
+
+        document.addEventListener('mouseup', () => {
+            if (isDragging) {
+                isDragging = false;
+                saveStickyNotes();
+            }
+        });
+
+        // 锁定功能
+        lockBtn.addEventListener('click', () => {
+            note.classList.toggle('locked');
+            content.readOnly = note.classList.contains('locked');
+            lockBtn.innerHTML = note.classList.contains('locked') ? 
+                '<i class="fas fa-lock"></i>' : 
+                '<i class="fas fa-lock-open"></i>';
+            saveStickyNotes();
+        });
+
+        // 删除功能
+        deleteBtn.addEventListener('click', () => {
+            document.body.removeChild(note);
+            saveStickyNotes();
+        });
+
+        // 内容变化时保存
+        content.addEventListener('input', saveStickyNotes);
+
+        // 如果是已锁定的便签，设置锁定状态
+        if (noteData && noteData.locked) {
+            note.classList.add('locked');
+            content.readOnly = true;
+            lockBtn.innerHTML = '<i class="fas fa-lock"></i>';
+        }
+
+        document.body.appendChild(note);
+        saveStickyNotes();
+    }
+
+    // 保存便签数据
+    function saveStickyNotes() {
+        const notes = Array.from(document.querySelectorAll('.sticky-note')).map(note => ({
+            x: parseInt(note.style.left),
+            y: parseInt(note.style.top),
+            width: note.style.width,
+            height: note.style.height,
+            content: note.querySelector('.sticky-note-content').value,
+            locked: note.classList.contains('locked')
+        }));
+        localStorage.setItem('stickyNotes', JSON.stringify(notes));
+    }
+
+    // 加载便签
+    function loadStickyNotes() {
+        const enableStickyNotes = localStorage.getItem('enableStickyNotes') !== 'false';
+        if (enableStickyNotes) {
+            stickyNotes.forEach(noteData => {
+                createStickyNote(0, 0, noteData);
+            });
+        }
+    }
+
+    // 初始化便签功能
+    function initStickyNotes() {
+        const enableStickyNotesCheckbox = document.getElementById('enable-sticky-notes');
+        
+        // 从localStorage加载设置
+        const enableStickyNotes = localStorage.getItem('enableStickyNotes') !== 'false';
+        enableStickyNotesCheckbox.checked = enableStickyNotes;
+
+        // 监听设置变化
+        enableStickyNotesCheckbox.addEventListener('change', (e) => {
+            localStorage.setItem('enableStickyNotes', e.target.checked);
+            if (!e.target.checked) {
+                // 移除所有便签
+                document.querySelectorAll('.sticky-note').forEach(note => {
+                    document.body.removeChild(note);
+                });
+            } else {
+                // 重新加载便签
+                loadStickyNotes();
+            }
+        });
+
+        // 右键菜单
+        document.addEventListener('contextmenu', (e) => {
+            if (!enableStickyNotesCheckbox.checked) return;
+            
+            // 检查是否点击在便签上
+            let target = e.target;
+            while (target) {
+                if (target.classList && target.classList.contains('sticky-note')) {
+                    return;
+                }
+                target = target.parentElement;
+            }
+
+            e.preventDefault();
+            createContextMenu(e.clientX, e.clientY);
+        });
+
+        // 点击其他地方时隐藏右键菜单
+        document.addEventListener('click', removeContextMenu);
+
+        // 加载已保存的便签
+        loadStickyNotes();
+    }
+
+    // 在文档加载完成后初始化便签功能
+    document.addEventListener('DOMContentLoaded', () => {
+        // ... existing code ...
+        initStickyNotes();
+    });
 });
+
+// 移到全局作用域的函数
+window.editBookmark = function(event, name) {
+    event.preventDefault();
+    const defaultBookmarks = [
+        { name: '百度', url: 'https://www.baidu.com', icon: 'https://www.baidu.com/favicon.ico' },
+        { name: '微博', url: 'https://weibo.com', icon: 'https://weibo.com/favicon.ico' },
+        { name: '知乎', url: 'https://www.zhihu.com', icon: 'https://static.zhihu.com/heifetz/favicon.ico' },
+        { name: '淘宝', url: 'https://www.taobao.com', icon: 'https://www.taobao.com/favicon.ico' },
+        { name: '哔哩哔哩', url: 'https://www.bilibili.com', icon: 'https://www.bilibili.com/favicon.ico' },
+    ];
+    const bookmarks = JSON.parse(localStorage.getItem('bookmarks')) || defaultBookmarks;
+    const bookmark = bookmarks.find(b => b.name === name);
+    if (bookmark) {
+        document.getElementById('bookmark-form-title').textContent = '编辑快速访问';
+        document.getElementById('bookmark-name').value = bookmark.name;
+        document.getElementById('bookmark-url').value = bookmark.url;
+        document.getElementById('bookmark-icon').value = bookmark.icon;
+        document.getElementById('save-bookmark').setAttribute('data-edit', name);
+        document.getElementById('bookmark-form-modal').classList.add('show');
+    }
+};
+
+window.deleteBookmark = function(event, name) {
+    event.preventDefault();
+    if (confirm('确定要删除这个快速访问吗？')) {
+        const defaultBookmarks = [
+            { name: '百度', url: 'https://www.baidu.com', icon: 'https://www.baidu.com/favicon.ico' },
+            { name: '微博', url: 'https://weibo.com', icon: 'https://weibo.com/favicon.ico' },
+            { name: '知乎', url: 'https://www.zhihu.com', icon: 'https://static.zhihu.com/heifetz/favicon.ico' },
+            { name: '淘宝', url: 'https://www.taobao.com', icon: 'https://www.taobao.com/favicon.ico' },
+            { name: '哔哩哔哩', url: 'https://www.bilibili.com', icon: 'https://www.bilibili.com/favicon.ico' },
+        ];
+        const bookmarks = JSON.parse(localStorage.getItem('bookmarks')) || defaultBookmarks;
+        const updatedBookmarks = bookmarks.filter(b => b.name !== name);
+        localStorage.setItem('bookmarks', JSON.stringify(updatedBookmarks));
+        // 重新加载书签
+        const bookmarksList = document.getElementById('bookmarks-list');
+        bookmarksList.innerHTML = '';
+        updatedBookmarks.forEach(bookmark => {
+            const bookmarkElement = document.createElement('a');
+            bookmarkElement.href = bookmark.url;
+            bookmarkElement.className = 'bookmark';
+            bookmarkElement.innerHTML = `
+                <img src="${bookmark.icon}" alt="${bookmark.name}" onerror="this.src='default-icon.png'">
+                <span>${bookmark.name}</span>
+                <div class="bookmark-actions">
+                    <button class="bookmark-action-btn" onclick="editBookmark(event, '${bookmark.name}')">
+                        <i class="fas fa-edit"></i>
+                    </button>
+                    <button class="bookmark-action-btn" onclick="deleteBookmark(event, '${bookmark.name}')">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                </div>
+            `;
+            bookmarksList.appendChild(bookmarkElement);
+        });
+        // 更新编辑列表
+        const bookmarksEditList = document.getElementById('bookmarks-edit-list');
+        if (bookmarksEditList) {
+            bookmarksEditList.innerHTML = '';
+            updatedBookmarks.forEach(bookmark => {
+                const item = document.createElement('div');
+                item.className = 'bookmark-edit-item';
+                item.innerHTML = `
+                    <img src="${bookmark.icon}" alt="${bookmark.name}" onerror="this.src='default-icon.png'">
+                    <div class="bookmark-edit-info">
+                        <div class="bookmark-edit-name">${bookmark.name}</div>
+                        <div class="bookmark-edit-url">${bookmark.url}</div>
+                    </div>
+                    <div class="bookmark-edit-actions">
+                        <button class="edit-btn" onclick="editBookmark(event, '${bookmark.name}')">编辑</button>
+                        <button class="delete-btn" onclick="deleteBookmark(event, '${bookmark.name}')">删除</button>
+                    </div>
+                `;
+                bookmarksEditList.appendChild(item);
+            });
+        }
+    }
+};
 

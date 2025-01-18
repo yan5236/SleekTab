@@ -17,21 +17,53 @@
         </div>
         <div class="search-container">
             <div class="search-wrapper">
-                <select id="search-engine" class="search-engine-select">
-                    <option value="baidu" data-icon="https://www.baidu.com/favicon.ico">百度</option>
-                    <option value="google" data-icon="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAMAAABEpIrGAAAABGdBTUEAALGPC/xhBQAAAAFzUkdCAK7OHOkAAABjUExURUxpcf////8gIP8AAP93d/9AQP9QUP+AgP9gYP+Pj/+vr/+fn/+/v/+goP/Pz/+wsP/v7/+Bgf9hYf/f3/+QkP+wsPwAAP+AgP/f3/+fn/9wcP+vr//Pz/+Pj/9QUP8QEP8gIP///7BxvbgAAAAfdFJOUwCR7v4FxzK/Cw0DBmvB5S6MiuQlrYPaYBxbzlQ5SJEzjwoAAAFKSURBVDjLfVPZloMgDEQEF9wVt7bT5f//sgFxqaedd8gJk5tJCP5EKeUfQPrHkP4EUkpTBmF0wgjICMUY0+z7F4TVNI1SjXa4YeNkXdd1MwxnMMuyLG3b/gR0XZem6RcE1wkh67oaY+Z5TpLkBgGHMAzjOEaSGGPXdRdEWZYhBLQsSxAEGOM8zzHGF0RRFBDQsiymaQqC4IwoimJZFoxxHMcEhBCSZRkEwDn3PA8hdEI8z4MAmOd5kiQQUFUVxvgCKYriApnnGUJwxvM8vwP2fccYb9t2hxRFQSlFCBlj3gHbtkFAVVUQ4Ps+pVQp9Q7Y9/0CgZZ93z8cBwS01r7vE0Jc130H6DTGEELgbsuyOI5j23YQBFrrEwL+4zhCCBDQNI1lWUEQnBBjDNwNwxBFked5bdsCwg3xC4RzrpQ6IfAL5xwQ8Ot53l/4AZTyJEXbULHAAAAAAElFTkSuQmCC">谷歌</option>
-                    <option value="bing" data-icon="https://www.bing.com/favicon.ico">必应</option>
-                    <option value="sogou" data-icon="https://www.sogou.com/favicon.ico">搜狗</option>
-                    <option value="duckduckgo" data-icon="https://duckduckgo.com/favicon.ico">DuckDuckGo</option>
-                    <option value="yandex" data-icon="https://yandex.com/favicon.ico">Yandex</option>
-                    <option value="github" data-icon="https://github.com/favicon.ico">GitHub</option>
-                </select>
+                <div class="custom-select">
+                    <div class="selected-option">
+                        <img src="https://www.baidu.com/favicon.ico" alt="百度" class="search-engine-icon">
+                        <span class="search-engine-name">百度</span>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="options-container">
+                        <div class="option" data-value="baidu" data-icon="https://www.baidu.com/favicon.ico">
+                            <img src="https://www.baidu.com/favicon.ico" alt="百度" class="search-engine-icon">
+                            <span>百度</span>
+                        </div>
+                        <div class="option" data-value="google" data-icon="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAMAAABEpIrGAAAABGdBTUEAALGPC/xhBQAAAAFzUkdCAK7OHOkAAABjUExURUxpcf////8gIP8AAP93d/9AQP9QUP+AgP9gYP+Pj/+vr/+fn/+/v/+goP/Pz/+wsP/v7/+Bgf9hYf/f3/+QkP+wsPwAAP+AgP/f3/+fn/9wcP+vr//Pz/+Pj/9QUP8QEP8gIP///7BxvbgAAAAfdFJOUwCR7v4FxzK/Cw0DBmvB5S6MiuQlrYPaYBxbzlQ5SJEzjwoAAAFKSURBVDjLfVPZloMgDEQEF9wVt7bT5f//sgFxqaedd8gJk5tJCP5EKeUfQPrHkP4EUkpTBmF0wgjICMUY0+z7F4TVNI1SjXa4YeNkXdd1MwxnMMuyLG3b/gR0XZem6RcE1wkh67oaY+Z5TpLkBgGHMAzjOEaSGGPXdRdEWZYhBLQsSxAEGOM8zzHGF0RRFBDQsiymaQqC4IwoimJZFoxxHMcEhBCSZRkEwDn3PA8hdEI8z4MAmOd5kiQQUFUVxvgCKYriApnnGUJwxvM8vwP2fccYb9t2hxRFQSlFCBlj3gHbtkFAVVUQ4Ps+pVQp9Q7Y9/0CgZZ93z8cBwS01r7vE0Jc130H6DTGEELgbsuyOI5j23YQBFrrEwL+4zhCCBDQNI1lWUEQnBBjDNwNwxBFked5bdsCwg3xC4RzrpQ6IfAL5xwQ8Ot53l/4AZTyJEXbULHAAAAAAElFTkSuQmCC">
+                            <span>谷歌</span>
+                        </div>
+                        <div class="option" data-value="bing" data-icon="https://www.bing.com/favicon.ico">
+                            <img src="https://www.bing.com/favicon.ico" alt="必应" class="search-engine-icon">
+                            <span>必应</span>
+                        </div>
+                        <div class="option" data-value="sogou" data-icon="https://www.sogou.com/favicon.ico">
+                            <img src="https://www.sogou.com/favicon.ico" alt="搜狗" class="search-engine-icon">
+                            <span>搜狗</span>
+                        </div>
+                        <div class="option" data-value="duckduckgo" data-icon="https://duckduckgo.com/favicon.ico">
+                            <img src="https://duckduckgo.com/favicon.ico" alt="DuckDuckGo" class="search-engine-icon">
+                            <span>DuckDuckGo</span>
+                        </div>
+                        <div class="option" data-value="yandex" data-icon="https://yandex.com/favicon.ico">
+                            <img src="https://yandex.com/favicon.ico" alt="Yandex" class="search-engine-icon">
+                            <span>Yandex</span>
+                        </div>
+                        <div class="option" data-value="github" data-icon="https://github.com/favicon.ico">
+                            <img src="https://github.com/favicon.ico" alt="GitHub" class="search-engine-icon">
+                            <span>GitHub</span>
+                        </div>
+                    </div>
+                </div>
                 <input type="text" id="search-input" placeholder="搜索..." autocomplete="off">
                 <button id="search-button">搜索</button>
             </div>
         </div>
         <div class="bookmarks-container">
-            <h2>快速访问</h2>
+            <div class="bookmarks-header">
+                <h2>快速访问</h2>
+                <button id="edit-bookmarks-button" class="icon-button">
+                    <img src="icons/bianji.png" alt="编辑" title="编辑快速访问">
+                </button>
+            </div>
             <div id="bookmarks-list"></div>
         </div>
     </div>
@@ -82,6 +114,16 @@
                     </div>
                 </div>
                 <div class="settings-section">
+                    <label>悬停显示快速访问编辑按钮</label>
+                    <div class="toggle-switch">
+                        <input type="checkbox" id="show-bookmark-actions" checked>
+                        <label for="show-bookmark-actions" class="toggle-label">
+                            <span class="toggle-button"></span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="settings-section">
                     <h3 class="settings-title">已添加的搜索引擎</h3>
                     <div id="custom-search-list" class="custom-search-list">
                         <!-- 这里将通过JavaScript动态添加已保存的搜索引擎 -->
@@ -116,6 +158,56 @@
         </div>
     </div>
 
+    <!-- 快速访问编辑模态框 -->
+    <div id="bookmarks-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>编辑快速访问</h2>
+                <button class="close-modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="bookmarks-edit-container">
+                    <button id="add-bookmark" class="primary-button">
+                        <i class="fas fa-plus"></i> 添加新的快速访问
+                    </button>
+                    <div id="bookmarks-edit-list"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 快速访问编辑表单模态框 -->
+    <div id="bookmark-form-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="bookmark-form-title">添加快速访问</h2>
+                <button class="close-modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="settings-section custom-search-engine">
+                    <div class="settings-row">
+                        <label for="bookmark-name">名称</label>
+                        <input type="text" id="bookmark-name" placeholder="例如：GitHub">
+                    </div>
+                    <div class="settings-row">
+                        <label for="bookmark-url">网址</label>
+                        <input type="text" id="bookmark-url" placeholder="例如：https://github.com">
+                    </div>
+                    <div class="settings-row">
+                        <label for="bookmark-icon">图标URL（可选）</label>
+                        <input type="text" id="bookmark-icon" placeholder="例如：https://github.com/favicon.ico">
+                        <small class="input-tip">留空将使用网站默认图标</small>
+                    </div>
+                    <div class="settings-row">
+                        <button id="save-bookmark" class="primary-button">
+                            <i class="fas fa-save"></i> 保存
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <div id="online-version-notice" class="hidden">
         <p>您正在使用在线版本。想要获得更好的体验，请考虑<a href="https://github.com/yan5236/SleekTab-crx" id="install-link">安装本地扩展</a>。<button id="notice-close" class="notice-close">&times;</button></p>
     </div>
@@ -123,6 +215,7 @@
         <i class="fas fa-cog"></i>
     </button>
     <script src="searchEngines.js"></script>
+    <script src="addons.js"></script>
     <script src="script.js"></script>
 </body>
 </html>
