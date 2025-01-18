@@ -160,8 +160,16 @@ document.addEventListener('DOMContentLoaded', () => {
      * 处理在线版本的提示信息
      */
     // 检查是否作为扩展运行
-    if (!chrome.runtime && !localStorage.getItem('notice_closed')) {
-        onlineVersionNotice.classList.remove('hidden');
+    try {
+        if (typeof chrome === 'undefined' || !chrome.runtime) {
+            if (!localStorage.getItem('notice_closed')) {
+                onlineVersionNotice.classList.remove('hidden');
+            }
+        }
+    } catch (e) {
+        if (!localStorage.getItem('notice_closed')) {
+            onlineVersionNotice.classList.remove('hidden');
+        }
     }
 
     // 关闭提示按钮
@@ -172,11 +180,13 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // 安装链接（示例）
-    installLink.addEventListener('click', (e) => {
-        e.preventDefault();
-        window.location.href = 'https://github.com/yan5236/SleekTab-crx';
-    });
+    // 安装链接
+    if (installLink) {
+        installLink.addEventListener('click', (e) => {
+            e.preventDefault();
+            window.open('https://github.com/yan5236/SleekTab-crx', '_blank');
+        });
+    }
 
     /**
      * 壁纸管理模块
