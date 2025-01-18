@@ -1489,24 +1489,53 @@ body.dark-theme .bookmark-edit-url {
     opacity: 1;
 }
 
+/* 搜索引擎选择器样式 */
 .custom-select {
     position: relative;
     min-width: 120px;
     cursor: pointer;
+    z-index: 1100;
 }
 
 .selected-option {
     display: flex;
     align-items: center;
     gap: 8px;
-    padding: 8px 12px;
-    background: rgba(255, 255, 255, 0.2);
-    border-radius: 8px;
-    transition: all 0.3s ease;
+    padding: 8px;
+    background: #fff;
+    border-radius: 8px 0 0 8px;
+    border-right: 1px solid rgba(0, 0, 0, 0.1);
 }
 
-.selected-option:hover {
-    background: rgba(255, 255, 255, 0.3);
+.options-container {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    width: 100%;
+    background: #fff;
+    border-radius: 8px;
+    margin-top: 4px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    visibility: hidden;
+    opacity: 0;
+    z-index: 1100;
+}
+
+.custom-select.active .options-container {
+    visibility: visible;
+    opacity: 1;
+}
+
+.option {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px;
+    transition: background-color 0.2s;
+}
+
+.option:hover {
+    background: var(--hover-bg-color, rgba(255, 255, 255, 0.35));
 }
 
 .search-engine-icon {
@@ -1516,116 +1545,29 @@ body.dark-theme .bookmark-edit-url {
 }
 
 .search-engine-name {
-    font-size: 14px;
-    color: #333;
+    flex: 1;
     white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
-.selected-option i {
-    margin-left: auto;
-    transition: transform 0.3s ease;
+.selected-option .fa-chevron-down {
+    transition: transform 0.2s;
 }
 
-.custom-select.active .selected-option i {
+.custom-select.active .fa-chevron-down {
     transform: rotate(180deg);
 }
 
-.options-container {
-    position: absolute;
-    top: 100%;
-    left: 0;
-    width: 100%;
-    max-height: 0;
-    overflow: hidden;
-    background: rgba(255, 255, 255, 0.95);
-    border-radius: 8px;
-    margin-top: 4px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-    opacity: 0;
-    transition: all 0.3s ease;
-    z-index: 1000;
-}
-
-.custom-select.active .options-container {
-    max-height: 300px;
-    opacity: 1;
-    overflow-y: auto;
-    padding: 8px 0;
-}
-
-.option {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    padding: 8px 12px;
-    cursor: pointer;
-    transition: background-color 0.2s ease;
-}
-
-.option:hover {
-    background-color: rgba(0, 0, 0, 0.05);
-}
-
-.option span {
-    font-size: 14px;
-    color: #333;
-}
-
-.option-separator {
-    padding: 8px 12px;
-    font-size: 12px;
-    color: #666;
-    background-color: rgba(0, 0, 0, 0.02);
-    border-top: 1px solid rgba(0, 0, 0, 0.05);
-    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
-    margin: 4px 0;
-}
-
-/* 深色主题样式 */
-body.dark-theme .search-engine-name {
-    color: #fff;
-}
-
-body.dark-theme .selected-option i {
-    color: #fff;
-}
-
+/* 暗色主题适配 */
+body.dark-theme .selected-option,
 body.dark-theme .options-container {
-    background: rgba(40, 40, 40, 0.95);
-}
-
-body.dark-theme .option:hover {
-    background-color: rgba(255, 255, 255, 0.1);
-}
-
-body.dark-theme .option span {
-    color: #fff;
-}
-
-body.dark-theme .option-separator {
-    color: #999;
-    background-color: rgba(255, 255, 255, 0.05);
+    background: #444;
     border-color: rgba(255, 255, 255, 0.1);
 }
 
-/* 移动端适配 */
-@media screen and (max-width: 768px) {
-    .custom-select {
-        min-width: 100px;
-    }
-
-    .selected-option {
-        padding: 6px 8px;
-    }
-
-    .option {
-        padding: 6px 8px;
-    }
-
-    /* 当设置模态框打开时隐藏搜索框 */
-    .modal.show ~ .container .search-container {
-        display: none;
-    }
+body.dark-theme .option:hover {
+    background: #555;
 }
 
 /* 便签样式 */
