@@ -160,16 +160,11 @@ document.addEventListener('DOMContentLoaded', () => {
      * 处理在线版本的提示信息
      */
     // 检查是否作为扩展运行
-    try {
-        if (typeof chrome === 'undefined' || !chrome.runtime) {
-            if (!localStorage.getItem('notice_closed')) {
-                onlineVersionNotice.classList.remove('hidden');
-            }
-        }
-    } catch (e) {
-        if (!localStorage.getItem('notice_closed')) {
-            onlineVersionNotice.classList.remove('hidden');
-        }
+    const isExtension = window.location.protocol === 'chrome-extension:' || 
+                       (typeof chrome !== 'undefined' && chrome.runtime && chrome.runtime.id);
+                       
+    if (!isExtension && !localStorage.getItem('notice_closed')) {
+        onlineVersionNotice.classList.remove('hidden');
     }
 
     // 关闭提示按钮
