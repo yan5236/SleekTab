@@ -1,4 +1,16 @@
-// 默认搜索引擎配置
+/**
+ * 搜索引擎管理模块
+ * 提供搜索引擎的管理、切换和搜索功能
+ */
+
+/**
+ * 默认搜索引擎配置
+ * 包含预设的搜索引擎信息：
+ * - name: 搜索引擎名称
+ * - url: 搜索基础URL
+ * - queryParam: 查询参数名
+ * - icon: 图标URL
+ */
 const defaultSearchEngines = {
     baidu: {
         name: '百度',
@@ -44,25 +56,39 @@ const defaultSearchEngines = {
     }
 };
 
-// 搜索引擎管理类
+/**
+ * 搜索引擎管理类
+ * 处理搜索引擎的添加、编辑、删除和搜索功能
+ */
 class SearchEngineManager {
     constructor() {
         this.loadCustomEngines();
         this.initEventListeners();
     }
 
-    // 加载自定义搜索引擎
+    /**
+     * 加载自定义搜索引擎
+     * 从localStorage中读取用户自定义的搜索引擎配置
+     */
     loadCustomEngines() {
         this.customEngines = JSON.parse(localStorage.getItem('customSearchEngines') || '{}');
         this.updateUI();
     }
 
-    // 获取所有搜索引擎
+    /**
+     * 获取所有搜索引擎
+     * 合并默认搜索引擎和自定义搜索引擎
+     */
     getAllEngines() {
         return { ...defaultSearchEngines, ...this.customEngines };
     }
 
-    // 添加搜索引擎
+    /**
+     * 添加搜索引擎
+     * @param {string} name - 搜索引擎名称
+     * @param {string} url - 搜索URL
+     * @param {string} icon - 图标URL（可选）
+     */
     addSearchEngine(name, url, icon = '') {
         if (!name || !url) {
             throw new Error('请填写搜索引擎名称和URL！');
@@ -127,7 +153,11 @@ class SearchEngineManager {
         this.updateUI();
     }
 
-    // 编辑搜索引擎
+    /**
+     * 编辑搜索引擎
+     * @param {string} id - 搜索引擎ID
+     * @returns {Object|null} - 返回被编辑的搜索引擎对象，如果不存在则返回null
+     */
     editSearchEngine(id) {
         const engine = this.customEngines[id];
         if (!engine) return null;
@@ -139,7 +169,11 @@ class SearchEngineManager {
         return engine;
     }
 
-    // 删除搜索引擎
+    /**
+     * 删除搜索引擎
+     * @param {string} id - 搜索引擎ID
+     * @returns {boolean} - 删除是否成功
+     */
     deleteSearchEngine(id) {
         if (!this.customEngines[id]) return false;
         
@@ -149,18 +183,26 @@ class SearchEngineManager {
         return true;
     }
 
-    // 保存自定义搜索引擎到localStorage
+    /**
+     * 保存自定义搜索引擎到localStorage
+     */
     saveCustomEngines() {
         localStorage.setItem('customSearchEngines', JSON.stringify(this.customEngines));
     }
 
-    // 更新UI
+    /**
+     * 更新UI
+     * 更新搜索引擎列表和选择器
+     */
     updateUI() {
         this.updateSearchEngineList();
         this.updateSearchEngineSelect();
     }
 
-    // 更新搜索引擎列表
+    /**
+     * 更新搜索引擎列表
+     * 在设置面板中显示自定义搜索引擎列表
+     */
     updateSearchEngineList() {
         const container = document.getElementById('custom-search-list');
         if (!container) return;
@@ -192,7 +234,10 @@ class SearchEngineManager {
         });
     }
 
-    // 更新搜索引擎选择器
+    /**
+     * 更新搜索引擎选择器
+     * 更新主页面上的搜索引擎下拉选择框
+     */
     updateSearchEngineSelect() {
         const select = document.getElementById('search-engine');
         if (!select) return;
@@ -219,7 +264,10 @@ class SearchEngineManager {
         this.updateSearchEngineIcon();
     }
 
-    // 更新搜索引擎图标
+    /**
+     * 更新搜索引擎图标
+     * 更新搜索引擎选择器的图标显示
+     */
     updateSearchEngineIcon() {
         const select = document.getElementById('search-engine');
         if (!select) return;
@@ -236,7 +284,10 @@ class SearchEngineManager {
         select.style.backgroundImage = `url('${iconUrl}'), ${arrowSvg}`;
     }
 
-    // 执行搜索
+    /**
+     * 执行搜索
+     * @param {string} searchTerm - 搜索关键词
+     */
     performSearch(searchTerm) {
         if (!searchTerm) return;
 
@@ -249,88 +300,67 @@ class SearchEngineManager {
             throw new Error('请选择有效的搜索引擎！');
         }
 
+        // 构建搜索URL并执行搜索
         const searchUrl = `${engine.url}?${engine.queryParam}=${encodeURIComponent(searchTerm)}`;
         window.location.href = searchUrl;
     }
 
-    // 初始化事件监听
+    /**
+     * 初始化事件监听器
+     * 设置搜索引擎相关的事件处理
+     */
     initEventListeners() {
-        // 添加搜索引擎按钮点击事件
-        const saveButton = document.getElementById('save-custom-search');
-        if (saveButton) {
-            saveButton.addEventListener('click', () => {
-                try {
-                    const name = document.getElementById('custom-search-name').value.trim();
-                    const url = document.getElementById('custom-search-url').value.trim();
-                    const icon = document.getElementById('custom-search-icon').value.trim();
-                    
-                    this.addSearchEngine(name, url, icon);
-                    
-                    // 清空输入框
-                    document.getElementById('custom-search-name').value = '';
-                    document.getElementById('custom-search-url').value = '';
-                    document.getElementById('custom-search-icon').value = '';
-                    
-                    alert('搜索引擎添加成功！');
-                } catch (error) {
-                    alert(error.message);
-                }
-            });
-        }
-
-        // 搜索引擎列表的编辑和删除按钮点击事件
-        const searchEngineList = document.getElementById('custom-search-list');
-        if (searchEngineList) {
-            searchEngineList.addEventListener('click', (e) => {
-                const button = e.target.closest('.action-button');
-                if (!button) return;
-
-                const id = button.dataset.id;
-                if (!id) return;
-
-                if (button.classList.contains('edit-button')) {
-                    const engine = this.editSearchEngine(id);
-                    if (engine) {
-                        document.getElementById('custom-search-name').value = engine.name;
-                        document.getElementById('custom-search-url').value = `${engine.url}?${engine.queryParam}={q}`;
-                        document.getElementById('custom-search-icon').value = engine.icon || '';
-                    }
-                } else if (button.classList.contains('delete-button')) {
-                    if (confirm('确定要删除这个搜索引擎吗？')) {
-                        this.deleteSearchEngine(id);
-                    }
-                }
-            });
-        }
-
-        // 搜索引擎选择器变化事件
-        const searchEngineSelect = document.getElementById('search-engine');
-        if (searchEngineSelect) {
-            searchEngineSelect.addEventListener('change', (e) => {
-                localStorage.setItem('preferredSearchEngine', e.target.value);
+        // 搜索引擎选择变化时保存首选项
+        const select = document.getElementById('search-engine');
+        if (select) {
+            select.addEventListener('change', () => {
+                localStorage.setItem('preferredSearchEngine', select.value);
                 this.updateSearchEngineIcon();
             });
         }
 
-        // 搜索按钮点击事件
-        const searchButton = document.getElementById('search-button');
-        const searchInput = document.getElementById('search-input');
-        if (searchButton && searchInput) {
-            searchButton.addEventListener('click', () => {
+        // 添加自定义搜索引擎
+        const saveButton = document.getElementById('save-custom-search');
+        if (saveButton) {
+            saveButton.addEventListener('click', () => {
+                const nameInput = document.getElementById('custom-search-name');
+                const urlInput = document.getElementById('custom-search-url');
+                const iconInput = document.getElementById('custom-search-icon');
+
                 try {
-                    this.performSearch(searchInput.value.trim());
+                    this.addSearchEngine(
+                        nameInput.value.trim(),
+                        urlInput.value.trim(),
+                        iconInput.value.trim()
+                    );
+                    // 清空输入框
+                    nameInput.value = '';
+                    urlInput.value = '';
+                    iconInput.value = '';
                 } catch (error) {
                     alert(error.message);
                 }
             });
+        }
 
-            // 回车键搜索
-            searchInput.addEventListener('keypress', (e) => {
-                if (e.key === 'Enter') {
-                    try {
-                        this.performSearch(searchInput.value.trim());
-                    } catch (error) {
-                        alert(error.message);
+        // 删除和编辑按钮的事件委托
+        const customSearchList = document.getElementById('custom-search-list');
+        if (customSearchList) {
+            customSearchList.addEventListener('click', (e) => {
+                const button = e.target.closest('.action-button');
+                if (!button) return;
+
+                const id = button.dataset.id;
+                if (button.classList.contains('delete-button')) {
+                    if (confirm('确定要删除这个搜索引擎吗？')) {
+                        this.deleteSearchEngine(id);
+                    }
+                } else if (button.classList.contains('edit-button')) {
+                    const engine = this.editSearchEngine(id);
+                    if (engine) {
+                        document.getElementById('custom-search-name').value = engine.name;
+                        document.getElementById('custom-search-url').value = `${engine.url}?${engine.queryParam}={q}`;
+                        document.getElementById('custom-search-icon').value = engine.icon;
                     }
                 }
             });
@@ -338,7 +368,5 @@ class SearchEngineManager {
     }
 }
 
-// 创建搜索引擎管理器实例
-document.addEventListener('DOMContentLoaded', () => {
-    window.searchEngineManager = new SearchEngineManager();
-}); 
+// 创建搜索引擎管理器实例并挂载到window对象
+window.searchEngineManager = new SearchEngineManager(); 

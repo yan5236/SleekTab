@@ -1,4 +1,22 @@
+/**
+ * 新标签页主要功能脚本
+ * 包含以下功能模块：
+ * 1. DOM元素初始化
+ * 2. 双击隐藏功能
+ * 3. 搜索框透明度控制
+ * 4. 时钟显示
+ * 5. 书签管理
+ * 6. 主题切换
+ * 7. 壁纸管理
+ * 8. 设置模态框
+ * 9. 模糊效果控制
+ */
+
 document.addEventListener('DOMContentLoaded', () => {
+    /**
+     * DOM元素初始化
+     * 获取页面上所有需要操作的DOM元素
+     */
     const searchInput = document.getElementById('search-input');
     const searchButton = document.getElementById('search-button');
     const bookmarksList = document.getElementById('bookmarks-list');
@@ -14,6 +32,10 @@ document.addEventListener('DOMContentLoaded', () => {
     const blurValue = document.getElementById('blur-value');
     const enableDoubleClick = document.getElementById('enable-double-click');
 
+    /**
+     * 双击隐藏功能模块
+     * 实现双击页面时隐藏/显示界面元素的功能
+     */
     // 加载双击隐藏设置
     const savedDoubleClickEnabled = localStorage.getItem('double-click-enabled');
     enableDoubleClick.checked = savedDoubleClickEnabled === null ? true : savedDoubleClickEnabled === 'true';
@@ -47,6 +69,10 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
+    /**
+     * 搜索框透明度控制模块
+     * 控制搜索框背景的透明度
+     */
     // 加载保存的搜索框背景透明度
     const savedOpacity = localStorage.getItem('search-opacity') || '90';
     searchOpacityInput.value = savedOpacity;
@@ -67,6 +93,10 @@ document.addEventListener('DOMContentLoaded', () => {
         updateSearchOpacity(opacity);
     });
 
+    /**
+     * 时钟显示模块
+     * 显示和更新页面上的时钟
+     */
     // 更新时钟显示
     function updateClock() {
         const now = new Date();
@@ -80,7 +110,11 @@ document.addEventListener('DOMContentLoaded', () => {
     updateClock();
     setInterval(updateClock, 1000);
 
-    // Default bookmarks
+    /**
+     * 书签管理模块
+     * 管理和显示快速访问书签
+     */
+    // 默认书签配置
     const defaultBookmarks = [
         { name: '百度', url: 'https://www.baidu.com', icon: 'https://www.baidu.com/favicon.ico' },
         { name: '微博', url: 'https://weibo.com', icon: 'https://weibo.com/favicon.ico' },
@@ -89,7 +123,7 @@ document.addEventListener('DOMContentLoaded', () => {
         { name: '哔哩哔哩', url: 'https://www.bilibili.com', icon: 'https://www.bilibili.com/favicon.ico' },
     ];
 
-    // Load bookmarks
+    // 加载书签
     function loadBookmarks() {
         const bookmarks = JSON.parse(localStorage.getItem('bookmarks')) || defaultBookmarks;
         bookmarksList.innerHTML = '';
@@ -105,6 +139,10 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    /**
+     * 主题切换模块
+     * 管理页面主题的切换（浅色/深色）
+     */
     // 主题切换时更新搜索引擎下拉箭头颜色
     themeSelect.addEventListener('change', () => {
         document.body.classList.toggle('dark-theme', themeSelect.value === 'dark');
@@ -112,17 +150,21 @@ document.addEventListener('DOMContentLoaded', () => {
         window.searchEngineManager.updateSearchEngineIcon();
     });
 
-    // Load saved theme
+    // 加载保存的主题
     const savedTheme = localStorage.getItem('theme') || 'light';
     themeSelect.value = savedTheme;
     document.body.classList.toggle('dark-theme', savedTheme === 'dark');
 
-    // Check if running as an extension
+    /**
+     * 在线版本提示模块
+     * 处理在线版本的提示信息
+     */
+    // 检查是否作为扩展运行
     if (!chrome.runtime && !localStorage.getItem('notice_closed')) {
         onlineVersionNotice.classList.remove('hidden');
     }
 
-    // Close notice button
+    // 关闭提示按钮
     if (noticeCloseBtn) {
         noticeCloseBtn.addEventListener('click', () => {
             onlineVersionNotice.classList.add('hidden');
@@ -130,12 +172,16 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Install link (for demonstration, replace with actual install link)
+    // 安装链接（示例）
     installLink.addEventListener('click', (e) => {
         e.preventDefault();
         alert('This is where you would provide instructions to install the extension.');
     });
 
+    /**
+     * 壁纸管理模块
+     * 处理背景壁纸的设置和更新
+     */
     // 设置壁纸
     function setWallpaper() {
         const source = localStorage.getItem('wallpaper-source') || 'bing-daily';
@@ -182,10 +228,13 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }, 60 * 1000); // 每分钟检查一次
 
-    // Load bookmarks on page load
+    // 初始化加载书签
     loadBookmarks();
 
-    // 设置模态框相关
+    /**
+     * 设置模态框模块
+     * 处理设置界面的显示和隐藏
+     */
     const settingsButton = document.getElementById('settings-button');
     const settingsModal = document.getElementById('settings-modal');
     const closeModalButton = document.querySelector('.close-modal');
@@ -214,6 +263,10 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
+    /**
+     * 模糊效果控制模块
+     * 控制背景图片的模糊效果强度
+     */
     // 加载保存的模糊效果强度
     const savedBlur = localStorage.getItem('blur-strength') || '20';
     blurStrengthInput.value = savedBlur;
