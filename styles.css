@@ -1294,9 +1294,13 @@ body.dark-theme .input-tip {
             padding: 6px 8px;
         }
 
-        /* 当设置模态框打开时隐藏搜索框 */
-        .modal.show ~ .container .search-container {
-            display: none;
+        /* 当编辑模态框打开时隐藏搜索框 */
+        body .modal.show ~ .container .search-container,
+        body .modal.show ~ .container .search-wrapper {
+            display: none !important;
+            visibility: hidden !important;
+            opacity: 0 !important;
+            pointer-events: none !important;
         }
     }
 

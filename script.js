@@ -222,6 +222,7 @@ document.addEventListener('DOMContentLoaded', () => {
         // 打开编辑模态框
         editButton.addEventListener('click', () => {
             bookmarksModal.classList.add('show');
+            document.querySelector('.search-container').style.display = 'none';
             updateBookmarksEditList();
         });
 
@@ -229,6 +230,7 @@ document.addEventListener('DOMContentLoaded', () => {
         closeButtons.forEach(button => {
             button.addEventListener('click', () => {
                 button.closest('.modal').classList.remove('show');
+                document.querySelector('.search-container').style.display = '';
             });
         });
 
